@@ -152,6 +152,8 @@ Les évolutions de schéma sont appliquées automatiquement au premier chargemen
 
 ## Licence et contributions
 
-Aucune licence open source n’est accordée par défaut. Consultez le propriétaire du dépôt avant toute redistribution. Les rapports de bogues doivent exclure mots de passe, clés AES, paramètres SQL et URL SDM complètes.
+Ce projet est distribué sous [licence propriétaire](LICENSE). Le code est visible pour évaluation et collaboration autorisée, mais aucune permission automatique de copie, modification, déploiement, redistribution ou exploitation commerciale n’est accordée. Contactez le propriétaire du dépôt pour obtenir une autorisation écrite.
+
+Les rapports de bogues doivent exclure mots de passe, clés AES, paramètres SQL et URL SDM complètes.
 
 Voir [CHANGELOG.md](CHANGELOG.md) pour l’historique de la version.

@@ -9,6 +9,7 @@ Toutes les modifications notables de Secret Magic Cards sont documentées ici.
 - Ajout des manifestes Composer pour le Dependency Graph GitHub.
 - Ajout de la surveillance hebdomadaire Dependabot.
 - Ajout du graphe Mermaid des dépendances internes au README.
+- Ajout du fichier de licence propriétaire.
 
 ## [1.0.0] — 2026-08-11
 
