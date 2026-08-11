@@ -81,8 +81,15 @@ Il permet de prévisualiser une carte, produire son lien direct et son QR code,
 créer des liens courts à quatre caractères, consulter leurs visites, les
 désactiver ou les réarmer, et modifier l'accès administrateur.
 
-Le menu sépare les fonctions en cinq pages : vue d'ensemble, générateur,
-liens courts, programmation NFC 424 et accès administrateur.
+Le menu sépare les fonctions en six pages : vue d'ensemble, générateur,
+liens courts, programmation NFC 424, styles de cartes et accès administrateur.
+
+La page « Styles de cartes » permet de nommer un style personnalisé et de
+charger chaque photo disponible (enseigne + valeur). Une fois une première
+photo ajoutée, le style apparaît dans le générateur et le wizard NFC. Seules
+les cartes réellement chargées pour ce style peuvent être sélectionnées.
+Les images restent dans un dossier privé, sont converties en WebP et leurs
+proportions originales sont conservées.
 
 Exemple de lien court :
 
@@ -112,9 +119,10 @@ data » vide, puis approche la NTAG 424 DNA pour la programmer.
 
 Chaque puce reçoit un surnom libre (numéro écrit dessus, couleur, accessoire,
 etc.) et apparaît sous forme de carte dans le gestionnaire. La carte « + » ouvre
-un assistant modal en trois étapes. Une puce peut être désactivée ou supprimée
-après confirmation ; la suppression retire son profil et son historique du
-site, mais n'efface pas physiquement la puce.
+un assistant modal en trois étapes. Une puce peut être désactivée ou archivée
+après confirmation. L’archive conserve son profil, son historique et surtout
+sa clé maître : ils restent consultables pour reprogrammer la puce. Restaurer
+une puce la réactive.
 
 Une clé AES aléatoire est créée pour chaque profil et stockée chiffrée hors de
 la racine publique. La signature de chaque scan est validée par le serveur. Le

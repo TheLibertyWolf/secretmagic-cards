@@ -212,9 +212,26 @@ $styleDemande = parametre(['s'], 'moderne');
 
 $enseigneCle = $aliasEnseignes[$enseigneDemandee] ?? 'coeur';
 $valeurCle = $aliasValeurs[$valeurDemandee] ?? 'as';
-$style = $aliasStyles[$styleDemande] ?? 'moderne';
+$style = $aliasStyles[$styleDemande] ?? (preg_match('/^custom_[1-9][0-9]*$/', $styleDemande) ? $styleDemande : 'moderne');
 $enseigne = $enseignes[$enseigneCle];
 $rang = $valeurs[$valeurCle];
+$customCardId = null;
+$customStyleName = null;
+if (preg_match('/^custom_([1-9][0-9]*)$/', $style, $customStyleMatch)) {
+    try {
+        $customQuery = cards_db()->prepare('SELECT c.id, s.name FROM cards_custom_cards c JOIN cards_custom_styles s ON s.id = c.style_id WHERE c.style_id = ? AND c.suit = ? AND c.rank_value = ? LIMIT 1');
+        $customQuery->execute([(int) $customStyleMatch[1], $enseigneCle, $valeurCle]);
+        $customCard = $customQuery->fetch();
+        if (!$customCard) {
+            cards_render_disappeared('missing');
+        }
+        $customCardId = (int) $customCard['id'];
+        $customStyleName = (string) $customCard['name'];
+    } catch (Throwable $exception) {
+        error_log('Cards custom card error: ' . $exception->getMessage());
+        cards_render_disappeared('missing');
+    }
+}
 
 $nomsValeurs = [
     '2' => 'deux', '3' => 'trois', '4' => 'quatre', '5' => 'cinq', '6' => 'six',
@@ -276,6 +293,7 @@ $estNombre = ctype_digit($valeurCle);
                 #403725;
         }
         body.theme-minimal { color-scheme: light; background: #eeeae3; }
+        body.theme-custom { background: radial-gradient(circle at center, #2f3440, #0d1016 72%); }
 
         .scene {
             width: min(76vw, 350px, calc((100svh - 48px) * .714));
@@ -449,6 +467,8 @@ $estNombre = ctype_digit($valeurCle);
         .theme-minimal .back { background-color: #202124; box-shadow: 0 18px 50px rgba(44, 37, 27, .14); }
         .theme-minimal .corner { font-weight: 650; }
         .theme-minimal .royal { border-width: 1px; }
+        .theme-custom .front { display: grid; place-items: center; background: #0a0c10; }
+        .custom-card-image { display: block; width: 100%; height: 100%; object-fit: contain; }
 
         /* Reserve the corner-index area: the suit must never cross the court frame. */
         .front .royal {
@@ -475,11 +495,14 @@ $estNombre = ctype_digit($valeurCle);
         }
     </style>
 </head>
-<body class="theme-<?= htmlspecialchars($style, ENT_QUOTES, 'UTF-8') ?>">
+<body class="theme-<?= $customCardId ? 'custom' : htmlspecialchars($style, ENT_QUOTES, 'UTF-8') ?>">
     <main class="scene" aria-label="<?= htmlspecialchars(ucfirst($nomCarte), ENT_QUOTES, 'UTF-8') ?>">
         <div class="card <?= $enseigne['couleur'] === 'rouge' ? 'red' : 'black' ?>" id="card" role="button" tabindex="0" aria-label="<?= htmlspecialchars(ucfirst($nomCarte), ENT_QUOTES, 'UTF-8') ?> — appuyer pour rejouer l'animation">
             <div class="face back" aria-hidden="true"></div>
             <div class="face front">
+                <?php if ($customCardId): ?>
+                <img class="custom-card-image" src="/card-image.php?id=<?= $customCardId ?>" alt="<?= htmlspecialchars(ucfirst($nomCarte) . ' — ' . $customStyleName, ENT_QUOTES, 'UTF-8') ?>">
+                <?php else: ?>
                 <div class="corner" aria-hidden="true"><span><?= $rang ?></span><span class="suit"><?= $enseigne['symbole'] ?></span></div>
                 <div class="corner bottom" aria-hidden="true"><span><?= $rang ?></span><span class="suit"><?= $enseigne['symbole'] ?></span></div>
 
@@ -500,6 +523,7 @@ $estNombre = ctype_digit($valeurCle);
                             <span class="pip<?= $retourne ? ' flip' : '' ?>" style="--row:<?= $ligne ?>;--col:<?= $colonne ?>"><?= $enseigne['symbole'] ?></span>
                         <?php endforeach; ?>
                     </div>
+                <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>

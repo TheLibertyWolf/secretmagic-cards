@@ -39,13 +39,67 @@ function cards_admin_require(): array
     return [$pdo, $admin];
 }
 
-function cards_card_options(): array
+function cards_card_options(?PDO $pdo = null): array
 {
-    return [
+    $options = [
         'suits' => ['coeur' => '♥ Cœur', 'carreau' => '♦ Carreau', 'trefle' => '♣ Trèfle', 'pique' => '♠ Pique'],
         'ranks' => ['as' => 'As', '2' => '2', '3' => '3', '4' => '4', '5' => '5', '6' => '6', '7' => '7', '8' => '8', '9' => '9', '10' => '10', 'valet' => 'Valet', 'dame' => 'Dame', 'roi' => 'Roi'],
         'styles' => ['moderne' => 'Moderne', 'classique' => 'Classique', 'minimal' => 'Minimal', 'tetes' => 'Têtes traditionnelles', 'ancien' => 'Ancien Pallas'],
+        'availability' => ['moderne' => '*', 'classique' => '*', 'minimal' => '*', 'tetes' => '*', 'ancien' => '*'],
     ];
+
+    if ($pdo) {
+        $query = $pdo->query("SELECT s.id, s.name, c.suit, c.rank_value
+            FROM cards_custom_styles s
+            JOIN cards_custom_cards c ON c.style_id = s.id
+            WHERE s.active = 1 AND s.archived_at IS NULL
+            ORDER BY s.name, c.id");
+        foreach ($query->fetchAll() as $card) {
+            $key = 'custom_' . (int) $card['id'];
+            $options['styles'][$key] = (string) $card['name'];
+            if (!isset($options['availability'][$key]) || $options['availability'][$key] === '*') {
+                $options['availability'][$key] = [];
+            }
+            $options['availability'][$key][] = $card['suit'] . ':' . $card['rank_value'];
+        }
+    }
+
+    return $options;
+}
+
+function cards_card_choice_exists(PDO $pdo, string $suit, string $rank, string $style): bool
+{
+    $base = cards_card_options();
+    if (!isset($base['suits'][$suit], $base['ranks'][$rank])) {
+        return false;
+    }
+    if (isset($base['styles'][$style])) {
+        return true;
+    }
+    if (!preg_match('/^custom_([1-9][0-9]*)$/', $style, $match)) {
+        return false;
+    }
+    $query = $pdo->prepare("SELECT 1 FROM cards_custom_cards c JOIN cards_custom_styles s ON s.id = c.style_id
+        WHERE c.style_id = ? AND c.suit = ? AND c.rank_value = ? AND s.active = 1 AND s.archived_at IS NULL LIMIT 1");
+    $query->execute([(int) $match[1], $suit, $rank]);
+    return (bool) $query->fetchColumn();
+}
+
+function cards_style_label(PDO $pdo, string $style): string
+{
+    $base = cards_card_options();
+    if (isset($base['styles'][$style])) {
+        return $base['styles'][$style];
+    }
+    if (preg_match('/^custom_([1-9][0-9]*)$/', $style, $match)) {
+        $query = $pdo->prepare('SELECT name FROM cards_custom_styles WHERE id = ? LIMIT 1');
+        $query->execute([(int) $match[1]]);
+        $name = $query->fetchColumn();
+        if ($name !== false) {
+            return (string) $name;
+        }
+    }
+    return $style;
 }
 
 function cards_admin_page_start(string $title, string $active, array $admin): void
@@ -57,6 +111,7 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
         'generator' => ['/admin/generator.php', 'Générateur', '✦'],
         'links' => ['/admin/links.php', 'Liens courts', '↗'],
         'nfc' => ['/admin/nfc.php', 'NFC 424', '⌁'],
+        'styles' => ['/admin/styles.php', 'Styles de cartes', '▣'],
         'account' => ['/admin/account.php', 'Accès', '⚙'],
     ];
     ?>
@@ -69,9 +124,10 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
         <title><?= cards_h($title) ?> — Secret Magic Cards</title>
         <link rel="stylesheet" href="/admin/admin.css">
         <link rel="stylesheet" href="/admin/admin-layout.css">
-        <?php if ($active === 'nfc'): ?><link rel="stylesheet" href="/admin/nfc.css"><link rel="stylesheet" href="/admin/nfc-modal.css"><?php endif; ?>
+        <?php if ($active === 'nfc'): ?><link rel="stylesheet" href="/admin/nfc.css"><link rel="stylesheet" href="/admin/nfc-modal.css"><link rel="stylesheet" href="/admin/nfc-archive.css"><?php endif; ?>
         <?php if ($active === 'links'): ?><link rel="stylesheet" href="/admin/links.css"><?php endif; ?>
         <?php if ($active === 'account'): ?><link rel="stylesheet" href="/admin/account.css"><?php endif; ?>
+        <?php if ($active === 'styles'): ?><link rel="stylesheet" href="/admin/styles.css"><?php endif; ?>
     </head>
     <body class="dashboard" data-base-url="<?= cards_h(rtrim((string) cards_config()['app_url'], '/')) ?>">
         <header class="topbar">

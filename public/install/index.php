@@ -42,6 +42,7 @@ $requirements = [
     ['PHP 8.1 ou supérieur', version_compare(PHP_VERSION, '8.1.0', '>='), PHP_VERSION],
     ['Extension PDO MySQL', extension_loaded('pdo_mysql'), extension_loaded('pdo_mysql') ? 'Disponible' : 'Manquante'],
     ['Extension OpenSSL', extension_loaded('openssl'), extension_loaded('openssl') ? 'Disponible' : 'Manquante'],
+    ['Extension GD avec WebP', extension_loaded('gd') && function_exists('imagewebp'), extension_loaded('gd') && function_exists('imagewebp') ? 'Disponible' : 'Manquante'],
     ['Extension mbstring', extension_loaded('mbstring'), extension_loaded('mbstring') ? 'Disponible' : 'Manquante'],
     ['Extension JSON', extension_loaded('json'), extension_loaded('json') ? 'Disponible' : 'Manquante'],
     ['Dossier public accessible en écriture', is_writable($publicRoot), is_writable($publicRoot) ? 'Oui' : 'Non'],
@@ -107,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$installed) {
                 $config = [
                     'db_host' => $db['host'], 'db_port' => $db['port'], 'db_name' => $db['name'],
                     'db_user' => $db['user'], 'db_password' => $db['password'], 'app_url' => $appUrl,
+                    'custom_cards_path' => $defaultPrivateRoot . '/cards_uploads',
                     'nfc_key_encryption' => bin2hex(random_bytes(32)),
                     'initial_admin_user' => '', 'initial_admin_hash' => '',
                 ];
@@ -115,6 +117,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$installed) {
                 if (!is_dir($configDir) || !is_writable($configDir)) {
                     throw new RuntimeException('Le dossier du fichier de configuration n’est pas accessible en écriture.');
                 }
+                $customCardsPath = (string) $config['custom_cards_path'];
+                if ((!is_dir($customCardsPath) && !mkdir($customCardsPath, 0700, true)) || !is_writable($customCardsPath)) {
+                    throw new RuntimeException('Impossible de préparer le dossier privé des cartes personnalisées.');
+                }
+                chmod($customCardsPath, 0700);
                 $temporaryConfig = $configPath . '.tmp-' . bin2hex(random_bytes(4));
                 if (file_put_contents($temporaryConfig, $configSource, LOCK_EX) === false || !rename($temporaryConfig, $configPath)) {
                     throw new RuntimeException('Impossible d’écrire le fichier de configuration.');

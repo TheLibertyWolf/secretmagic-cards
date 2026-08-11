@@ -4,7 +4,7 @@
     const createForm = document.getElementById('create-tag-form');
     const programPanel = document.getElementById('program-panel');
     const title = document.getElementById('wizard-title');
-    const deleteDialog = document.getElementById('delete-dialog');
+    const archiveDialog = document.getElementById('archive-dialog');
     const backButton = document.getElementById('wizard-back');
     const nextButton = document.getElementById('wizard-next');
     const submitButton = document.getElementById('wizard-submit');
@@ -83,13 +83,40 @@
     document.addEventListener('click', () => document.querySelectorAll('.tag-action-menu').forEach(menu => { menu.hidden = true; }));
     document.querySelectorAll('.tag-action-menu').forEach(menu => menu.addEventListener('click', event => event.stopPropagation()));
 
-    document.querySelectorAll('.delete-profile').forEach(button => {
+    document.querySelectorAll('.archive-profile').forEach(button => {
         button.addEventListener('click', () => {
-            document.getElementById('delete-profile-id').value = button.dataset.id;
-            document.getElementById('delete-profile-name').textContent = button.dataset.nickname;
-            deleteDialog.showModal();
+            document.getElementById('archive-profile-id').value = button.dataset.id;
+            document.getElementById('archive-profile-name').textContent = button.dataset.nickname;
+            archiveDialog.showModal();
         });
     });
-    deleteDialog?.querySelector('[data-close-delete]')?.addEventListener('click', () => deleteDialog.close());
-    deleteDialog?.addEventListener('click', event => { if (event.target === deleteDialog) deleteDialog.close(); });
+    archiveDialog?.querySelector('[data-close-archive]')?.addEventListener('click', () => archiveDialog.close());
+    archiveDialog?.addEventListener('click', event => { if (event.target === archiveDialog) archiveDialog.close(); });
+
+    const nfcSuit = document.getElementById('nfc-suit');
+    const nfcRank = document.getElementById('nfc-rank');
+    const nfcStyle = document.getElementById('nfc-style');
+    const filterNfcCards = () => {
+        const raw = nfcStyle?.selectedOptions[0]?.dataset.cards || '*';
+        if (!nfcSuit || !nfcRank || raw === '*') {
+            [...(nfcSuit?.options || []), ...(nfcRank?.options || [])].forEach(option => { option.hidden = false; option.disabled = false; });
+            return;
+        }
+        const allowed = new Set(raw.split(',').filter(Boolean));
+        [...nfcSuit.options].forEach(option => {
+            const valid = [...allowed].some(card => card.startsWith(`${option.value}:`));
+            option.hidden = !valid;
+            option.disabled = !valid;
+        });
+        if (nfcSuit.selectedOptions[0]?.disabled) nfcSuit.value = [...nfcSuit.options].find(option => !option.disabled)?.value || '';
+        [...nfcRank.options].forEach(option => {
+            const valid = allowed.has(`${nfcSuit.value}:${option.value}`);
+            option.hidden = !valid;
+            option.disabled = !valid;
+        });
+        if (nfcRank.selectedOptions[0]?.disabled) nfcRank.value = [...nfcRank.options].find(option => !option.disabled)?.value || '';
+    };
+    nfcStyle?.addEventListener('change', filterNfcCards);
+    nfcSuit?.addEventListener('change', filterNfcCards);
+    filterNfcCards();
 })();

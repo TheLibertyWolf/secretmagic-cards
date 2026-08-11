@@ -4,6 +4,34 @@ Toutes les modifications notables de Secret Magic Cards sont documentées ici.
 
 ## [Non publié]
 
+## [2.0.0] — 2026-08-11
+
+### Styles personnalisés
+
+- Ajout d’une page d’administration dédiée aux styles de cartes.
+- Ajout de la création et de l’archivage réversible des styles nommés.
+- Ajout de l’import manuel d’une photo pour chaque combinaison enseigne/valeur.
+- Validation des fichiers JPG, PNG et WebP avec une limite de 8 Mo.
+- Correction automatique de l’orientation JPEG, redimensionnement proportionnel et conversion WebP.
+- Stockage des médias hors de la racine publique et diffusion par un endpoint contrôlé.
+- Filtrage dynamique du générateur de liens et du wizard NFC : seules les cartes importées sont proposées.
+- Maintien du fonctionnement des anciens liens lorsqu’un style personnalisé est archivé.
+
+### NFC NTAG 424 DNA
+
+- Suppression de l’effacement définitif des profils NFC depuis l’interface.
+- Ajout d’une archive séparée préservant la clé maître chiffrée, l’historique et les statistiques.
+- Ajout de la consultation des paramètres de programmation depuis l’archive.
+- Ajout de la restauration et de la réactivation d’une puce archivée.
+- Blocage des révélations d’une puce pendant son archivage.
+
+### Installation et dépendances
+
+- Ajout des tables `cards_custom_styles` et `cards_custom_cards`.
+- Ajout de la migration `archived_at` pour les profils NFC existants.
+- Ajout de la création automatique du dossier privé `cards_uploads`.
+- Ajout de GD aux prérequis contrôlés par l’installateur et au manifeste Composer.
+
 ### Documentation et chaîne d’approvisionnement
 
 - Ajout des manifestes Composer pour le Dependency Graph GitHub.

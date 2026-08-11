@@ -1,6 +1,7 @@
 /app/install.lock
 /public/cards_loader.php
 /config.php
+/vendor/
 *.log
 .DS_Store
 /.idea/

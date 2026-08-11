@@ -133,6 +133,35 @@ function cards_migrate(PDO $pdo): void
         $pdo->exec("ALTER TABLE cards_nfc_sdm_profiles ADD COLUMN nickname VARCHAR(80) NOT NULL DEFAULT 'Puce NFC' AFTER profile_token");
     }
 
+    $archivedColumn = $pdo->query("SHOW COLUMNS FROM cards_nfc_sdm_profiles LIKE 'archived_at'")->fetch();
+    if (!$archivedColumn) {
+        $pdo->exec("ALTER TABLE cards_nfc_sdm_profiles ADD COLUMN archived_at DATETIME NULL AFTER last_scanned_at, ADD INDEX idx_cards_sdm_archived (archived_at)");
+    }
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS cards_custom_styles (
+        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(80) NOT NULL,
+        active TINYINT(1) NOT NULL DEFAULT 1,
+        created_by INT UNSIGNED NULL,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        archived_at DATETIME NULL,
+        INDEX idx_cards_custom_styles_active (active),
+        CONSTRAINT fk_cards_custom_style_admin FOREIGN KEY (created_by) REFERENCES cards_admins(id) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    $pdo->exec("CREATE TABLE IF NOT EXISTS cards_custom_cards (
+        id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        style_id BIGINT UNSIGNED NOT NULL,
+        suit VARCHAR(12) NOT NULL,
+        rank_value VARCHAR(8) NOT NULL,
+        image_filename VARCHAR(100) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE KEY uq_cards_custom_card (style_id, suit, rank_value),
+        INDEX idx_cards_custom_card_style (style_id),
+        CONSTRAINT fk_cards_custom_card_style FOREIGN KEY (style_id) REFERENCES cards_custom_styles(id) ON DELETE RESTRICT
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
     $pdo->exec("CREATE TABLE IF NOT EXISTS cards_nfc_sdm_scans (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         profile_id BIGINT UNSIGNED NOT NULL,

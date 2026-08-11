@@ -4,7 +4,7 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/cards_entry.php';
 require_once CARDS_APP_PATH . '/admin_helpers.php';
 [$pdo, $admin] = cards_admin_require();
-$options = cards_card_options();
+$options = cards_card_options($pdo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     cards_verify_csrf();
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $style = isset($_POST['visual_style']) && is_string($_POST['visual_style']) ? $_POST['visual_style'] : '';
     $limitMode = isset($_POST['limit_mode']) && is_string($_POST['limit_mode']) ? $_POST['limit_mode'] : 'unlimited';
 
-    if (!isset($options['suits'][$suit], $options['ranks'][$rank], $options['styles'][$style])) {
+    if (!cards_card_choice_exists($pdo, $suit, $rank, $style)) {
         cards_admin_flash('error', 'Les paramètres de la carte sont invalides.');
         cards_admin_redirect('/admin/generator.php');
     }
@@ -49,7 +49,7 @@ cards_admin_page_start('Générateur', 'generator', $admin);
         <div class="three-fields">
             <label>Enseigne<select name="suit" id="suit"><?php foreach ($options['suits'] as $value => $label): ?><option value="<?= cards_h($value) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>
             <label>Valeur<select name="rank" id="rank"><?php foreach ($options['ranks'] as $value => $label): ?><option value="<?= cards_h($value) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>
-            <label>Style<select name="visual_style" id="visual-style"><?php foreach ($options['styles'] as $value => $label): ?><option value="<?= cards_h($value) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>
+            <label>Style<select name="visual_style" id="visual-style"><?php foreach ($options['styles'] as $value => $label): $available = $options['availability'][$value] ?? []; ?><option value="<?= cards_h($value) ?>" data-cards="<?= cards_h($available === '*' ? '*' : implode(',', $available)) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>
         </div>
         <div class="link-output"><span>Lien direct</span><div><input id="direct-link" readonly aria-label="Lien direct"><button type="button" class="copy-button" data-copy-target="direct-link">Copier</button></div></div>
         <div class="qr-row"><div id="qrcode" aria-label="QR code du lien direct"></div><p>Ce QR code correspond au lien direct, sans limite de visites.</p></div>

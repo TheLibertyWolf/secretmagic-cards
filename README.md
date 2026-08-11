@@ -12,8 +12,9 @@ Application web mobile permettant de révéler une carte parmi les 52 cartes ave
 - Générateur en direct avec aperçu téléphonique, URL et QR code.
 - Liens courts de quatre caractères, illimités, à visite unique ou à limite personnalisée.
 - Page de disparition magique lorsque le lien est épuisé ou absent.
-- Gestionnaire de puces NTAG 424 DNA avec surnoms, statistiques et suppression confirmée.
+- Gestionnaire de puces NTAG 424 DNA avec surnoms, statistiques et archivage réversible conservant les clés maîtres.
 - URL SDM signée différente à chaque scan physique et protection anti-rejeu par compteur.
+- Création de styles personnalisés et import manuel, carte par carte, des visuels disponibles.
 - Comptes `admin` et `utilisateur`, sessions sécurisées et limitation des tentatives de connexion.
 - Assistant d’installation en quatre étapes.
 
@@ -22,7 +23,7 @@ Application web mobile permettant de révéler une carte parmi les 52 cartes ave
 ## Prérequis
 
 - PHP 8.1 ou supérieur ;
-- extensions `pdo_mysql`, `openssl`, `mbstring`, `json`, `hash` et `session` ;
+- extensions `pdo_mysql`, `openssl`, `mbstring`, `json`, `gd`, `hash` et `session` ;
 - MySQL ou MariaDB avec une base et un utilisateur existants ;
 - Apache 2.4 avec `mod_rewrite` recommandé ;
 - certificat HTTPS obligatoire pour la production et le NFC ;
@@ -34,6 +35,7 @@ Application web mobile permettant de révéler une carte parmi les 52 cartes ave
 /home/votre-compte/
 ├── cards_app/                         # contenu du dossier app/
 ├── cards.secretmagic.config.php       # généré par l’installateur
+├── cards_uploads/                     # photos personnalisées, hors du Web
 └── public_html/cards.example.com/     # contenu du dossier public/
 ```
 
@@ -54,11 +56,18 @@ flowchart TD
     Bootstrap --> Config
     Bootstrap --> Database
     Public --> Renderer["Moteur de rendu des cartes"]
+    Public --> Media["Images personnalisées contrôlées"]
     Public --> ShortLinks["Liens courts"]
     Public --> SDM["Validation NTAG 424 SDM"]
     ShortLinks --> Database
     SDM --> Crypto["OpenSSL AES / CMAC"]
     SDM --> Database
+    Admin --> CustomStyles["Styles personnalisés"]
+    CustomStyles --> GD["Extension GD / WebP"]
+    CustomStyles --> MediaStore[("Dossier privé cards_uploads")]
+    CustomStyles --> Database
+    Media --> MediaStore
+    Media --> Database
     Admin --> QR["QRCode.js embarqué"]
 ```
 
@@ -91,10 +100,12 @@ Valeurs acceptées :
 - `v` : `2` à `10`, `valet`, `dame`, `roi`, `as` ;
 - `s` : `moderne`, `classique`, `minimal`, `tetes`, `ancien`.
 
+Les styles personnalisés reçoivent automatiquement un identifiant interne de type `custom_12`. Ils se créent depuis **Administration → Styles de cartes**. Chaque photo est associée à une enseigne et une valeur précises ; un style n’est proposé dans le générateur de liens et le wizard NFC qu’après l’ajout de sa première carte, et seules ses cartes importées sont sélectionnables. Les images sont validées, redimensionnées sans déformation, converties en WebP et conservées hors de la racine publique.
+
 ## Comptes et rôles
 
 - **Administrateur** : accès complet et gestion des comptes.
-- **Utilisateur** : générateur, liens courts et NFC ; modification de ses propres identifiants uniquement.
+- **Utilisateur** : générateur, liens courts, NFC et styles de cartes ; modification de ses propres identifiants uniquement.
 
 Le premier compte créé par l’installateur est toujours administrateur. Un administrateur ne peut pas modifier son propre rôle ni supprimer le dernier administrateur.
 
@@ -119,6 +130,8 @@ Le parcours recommandé utilise **NFC Developer App** sur Android. La version d�
 3. Copiez dans l’application l’URL fournie et l’`Authentication master key`.
 4. Conservez le mode AES, désactivez LRP et laissez `Custom data` vide.
 5. Programmez la puce sans la verrouiller définitivement pendant les essais.
+
+Une puce n’est jamais supprimée depuis l’administration. L’action **Archiver** la désactive et la range séparément tout en conservant sa clé maître chiffrée, ses statistiques et les paramètres nécessaires à une réécriture. Elle peut ensuite être consultée, reprogrammée ou restaurée.
 
 À chaque scan, la puce produit `picc_data` et `cmac`. Le serveur déchiffre l’identité et le compteur, valide l’AES-CMAC, puis enregistre le couple puce/compteur. La même URL dynamique est refusée une seconde fois, tandis que le scan physique suivant reste valide.
 
@@ -146,7 +159,7 @@ Sauvegardez la base et les fichiers privés avant toute mise à jour. Remplacez 
 - `cards.secretmagic.config.php` ;
 - `public/cards_loader.php` ;
 - `app/install.lock` ;
-- les éventuels médias personnalisés.
+- le dossier `cards_uploads/` contenant les visuels personnalisés.
 
 Les évolutions de schéma sont appliquées automatiquement au premier chargement.
 

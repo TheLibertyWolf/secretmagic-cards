@@ -35,6 +35,28 @@
         }
     };
 
+    const filterCardChoices = () => {
+        if (!suit || !rank || !style) return;
+        const allowedRaw = style.selectedOptions[0]?.dataset.cards || '*';
+        if (allowedRaw === '*') {
+            [...suit.options, ...rank.options].forEach(option => { option.hidden = false; option.disabled = false; });
+            return;
+        }
+        const allowed = new Set(allowedRaw.split(',').filter(Boolean));
+        [...suit.options].forEach(option => {
+            const valid = [...allowed].some(card => card.startsWith(`${option.value}:`));
+            option.hidden = !valid;
+            option.disabled = !valid;
+        });
+        if (suit.selectedOptions[0]?.disabled) suit.value = [...suit.options].find(option => !option.disabled)?.value || '';
+        [...rank.options].forEach(option => {
+            const valid = allowed.has(`${suit.value}:${option.value}`);
+            option.hidden = !valid;
+            option.disabled = !valid;
+        });
+        if (rank.selectedOptions[0]?.disabled) rank.value = [...rank.options].find(option => !option.disabled)?.value || '';
+    };
+
     const updateCard = () => {
         if (!suit || !rank || !style) return;
         const base = body.dataset.baseUrl || window.location.origin;
@@ -54,7 +76,10 @@
         });
     };
 
-    [suit, rank, style].forEach(control => control?.addEventListener('change', updateCard));
+    style?.addEventListener('change', () => { filterCardChoices(); updateCard(); });
+    suit?.addEventListener('change', () => { filterCardChoices(); updateCard(); });
+    rank?.addEventListener('change', updateCard);
+    filterCardChoices();
     updateCard();
 
     document.querySelectorAll('[name="limit_mode"]').forEach(control => {
