@@ -101,7 +101,7 @@ Valeurs acceptées :
 - `v` : `2` à `10`, `valet`, `dame`, `roi`, `as` ;
 - `s` : `moderne`, `classique`, `minimal`, `tetes`, `ancien`.
 
-Les styles personnalisés reçoivent automatiquement un identifiant interne de type `custom_12`. Ils se créent depuis **Administration → Styles de cartes**. Chaque photo est associée à une enseigne et une valeur précises ; un style n’est proposé dans le générateur de liens et le wizard NFC qu’après l’ajout de sa première carte, et seules ses cartes importées sont sélectionnables. Les images sont validées, redimensionnées sans déformation, converties en WebP et conservées hors de la racine publique.
+Les styles personnalisés reçoivent automatiquement un identifiant interne de type `custom_12`. Ils se créent depuis **Administration → Styles de cartes**. Chaque photo est associée à une enseigne et une valeur précises ; un style n’est proposé dans le générateur de liens et le wizard NFC qu’après l’ajout de sa première carte, et seules ses cartes importées sont sélectionnables. Les images sont validées, redimensionnées sans déformation, converties en WebP et conservées hors de la racine publique. Leur ratio naturel est conservé par le cadre animé. Une bibliothèque importée peut également enregistrer sa source, son auteur et sa licence.
 
 ## Comptes et rôles
 
@@ -167,6 +167,8 @@ Les évolutions de schéma sont appliquées automatiquement au premier chargemen
 ## Licence et contributions
 
 Ce projet est distribué sous [licence propriétaire](LICENSE). Le code est visible pour évaluation et collaboration autorisée, mais aucune permission automatique de copie, modification, déploiement, redistribution ou exploitation commerciale n’est accordée. Contactez le propriétaire du dépôt pour obtenir une autorisation écrite.
+
+Les médias tiers importés dans un style personnalisé conservent leur propre licence. Les informations de source, d’auteur et de licence enregistrées avec le style ne sont pas remplacées par la licence propriétaire de l’application.
 
 Les rapports de bogues doivent exclure mots de passe, clés AES, paramètres SQL et URL SDM complètes.
 

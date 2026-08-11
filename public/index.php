@@ -217,9 +217,10 @@ $enseigne = $enseignes[$enseigneCle];
 $rang = $valeurs[$valeurCle];
 $customCardId = null;
 $customStyleName = null;
+$customCardRatio = null;
 if (preg_match('/^custom_([1-9][0-9]*)$/', $style, $customStyleMatch)) {
     try {
-        $customQuery = cards_db()->prepare('SELECT c.id, s.name FROM cards_custom_cards c JOIN cards_custom_styles s ON s.id = c.style_id WHERE c.style_id = ? AND c.suit = ? AND c.rank_value = ? LIMIT 1');
+        $customQuery = cards_db()->prepare('SELECT c.id, c.image_filename, c.image_width, c.image_height, s.name FROM cards_custom_cards c JOIN cards_custom_styles s ON s.id = c.style_id WHERE c.style_id = ? AND c.suit = ? AND c.rank_value = ? LIMIT 1');
         $customQuery->execute([(int) $customStyleMatch[1], $enseigneCle, $valeurCle]);
         $customCard = $customQuery->fetch();
         if (!$customCard) {
@@ -227,6 +228,15 @@ if (preg_match('/^custom_([1-9][0-9]*)$/', $style, $customStyleMatch)) {
         }
         $customCardId = (int) $customCard['id'];
         $customStyleName = (string) $customCard['name'];
+        $imageWidth = (int) ($customCard['image_width'] ?? 0);
+        $imageHeight = (int) ($customCard['image_height'] ?? 0);
+        if ($imageWidth < 1 || $imageHeight < 1) {
+            $imagePath = rtrim((string) (cards_config()['custom_cards_path'] ?? ''), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . basename((string) $customCard['image_filename']);
+            $imageInfo = is_file($imagePath) ? getimagesize($imagePath) : false;
+            $imageWidth = $imageInfo ? (int) $imageInfo[0] : 5;
+            $imageHeight = $imageInfo ? (int) $imageInfo[1] : 7;
+        }
+        $customCardRatio = max(0.5, min(1.0, $imageWidth / max(1, $imageHeight)));
     } catch (Throwable $exception) {
         error_log('Cards custom card error: ' . $exception->getMessage());
         cards_render_disappeared('missing');
@@ -302,6 +312,7 @@ $estNombre = ctype_digit($valeurCle);
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
+        .scene.custom-scene { width: min(76vw, 350px, calc((100svh - 48px) * var(--card-ratio))); aspect-ratio: var(--card-ratio); }
         .card {
             position: relative;
             width: 100%;
@@ -496,7 +507,7 @@ $estNombre = ctype_digit($valeurCle);
     </style>
 </head>
 <body class="theme-<?= $customCardId ? 'custom' : htmlspecialchars($style, ENT_QUOTES, 'UTF-8') ?>">
-    <main class="scene" aria-label="<?= htmlspecialchars(ucfirst($nomCarte), ENT_QUOTES, 'UTF-8') ?>">
+    <main class="scene<?= $customCardId ? ' custom-scene' : '' ?>"<?= $customCardRatio ? ' style="--card-ratio:' . htmlspecialchars(number_format($customCardRatio, 6, '.', ''), ENT_QUOTES, 'UTF-8') . '"' : '' ?> aria-label="<?= htmlspecialchars(ucfirst($nomCarte), ENT_QUOTES, 'UTF-8') ?>">
         <div class="card <?= $enseigne['couleur'] === 'rouge' ? 'red' : 'black' ?>" id="card" role="button" tabindex="0" aria-label="<?= htmlspecialchars(ucfirst($nomCarte), ENT_QUOTES, 'UTF-8') ?> — appuyer pour rejouer l'animation">
             <div class="face back" aria-hidden="true"></div>
             <div class="face front">

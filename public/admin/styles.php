@@ -91,9 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             imagedestroy($target);
             chmod($path, 0600);
-            $save = $pdo->prepare("INSERT INTO cards_custom_cards (style_id, suit, rank_value, image_filename)
-                VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE image_filename = VALUES(image_filename), updated_at = NOW()");
-            $save->execute([$styleId, $suit, $rank, $filename]);
+            $save = $pdo->prepare("INSERT INTO cards_custom_cards (style_id, suit, rank_value, image_filename, image_width, image_height)
+                VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE image_filename = VALUES(image_filename), image_width = VALUES(image_width), image_height = VALUES(image_height), updated_at = NOW()");
+            $save->execute([$styleId, $suit, $rank, $filename, $targetWidth, $targetHeight]);
             cards_admin_flash('success', ($options['ranks'][$rank] ?? $rank) . ' de ' . ($options['suits'][$suit] ?? $suit) . ' ajouté au style.');
         } elseif (in_array($action, ['archive_style', 'restore_style'], true)) {
             $styleId = filter_input(INPUT_POST, 'style_id', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
@@ -129,7 +129,7 @@ cards_admin_page_start('Styles de cartes', 'styles', $admin);
 <?php if (!$activeStyles): ?><div class="module empty-state"><span>▣</span><p>Aucun style personnalisé pour le moment.</p></div><?php endif; ?>
 <?php foreach ($activeStyles as $style): $cardQuery->execute([$style['id']]); $cards = $cardQuery->fetchAll(); ?>
 <article class="module custom-style-card">
-    <header><div><p class="eyebrow">Style personnalisé</p><h2><?= cards_h($style['name']) ?></h2><span><?= (int) $style['card_count'] ?> carte<?= (int) $style['card_count'] > 1 ? 's' : '' ?> sur 52</span></div><form method="post" class="archive-style-form"><input type="hidden" name="action" value="archive_style"><input type="hidden" name="style_id" value="<?= (int) $style['id'] ?>"><input type="hidden" name="csrf_token" value="<?= cards_h(cards_csrf_token()) ?>"><button class="ghost small" type="submit">Archiver</button></form></header>
+    <header><div><p class="eyebrow">Style personnalisé</p><h2><?= cards_h($style['name']) ?></h2><span><?= (int) $style['card_count'] ?> carte<?= (int) $style['card_count'] > 1 ? 's' : '' ?> sur 52</span><?php if (!empty($style['source_url'])): ?><small class="style-source">Illustrations : <?= cards_h($style['source_author'] ?: $style['source_title']) ?> · <a href="<?= cards_h($style['source_url']) ?>" target="_blank" rel="noopener noreferrer">Wikimedia Commons ↗</a> · <?= cards_h($style['source_license'] ?: 'Licence indiquée par la source') ?></small><?php endif; ?></div><form method="post" class="archive-style-form"><input type="hidden" name="action" value="archive_style"><input type="hidden" name="style_id" value="<?= (int) $style['id'] ?>"><input type="hidden" name="csrf_token" value="<?= cards_h(cards_csrf_token()) ?>"><button class="ghost small" type="submit">Archiver</button></form></header>
     <form method="post" enctype="multipart/form-data" class="card-upload-form"><input type="hidden" name="action" value="upload_card"><input type="hidden" name="style_id" value="<?= (int) $style['id'] ?>"><input type="hidden" name="csrf_token" value="<?= cards_h(cards_csrf_token()) ?>">
         <label>Enseigne<select name="suit"><?php foreach ($options['suits'] as $value => $label): ?><option value="<?= cards_h($value) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>
         <label>Valeur<select name="rank"><?php foreach ($options['ranks'] as $value => $label): ?><option value="<?= cards_h($value) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>

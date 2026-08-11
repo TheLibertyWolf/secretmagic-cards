@@ -10,6 +10,11 @@ grant any license to use, copy, modify, merge, publish, distribute,
 sublicense, sell, host, deploy or commercially exploit any part of the
 software or its assets.
 
+Third-party media imported by an administrator at runtime is excluded from
+this proprietary grant and remains governed by the license identified by its
+original author or source. Importing such media does not transfer its rights to
+the copyright holder of Secret Magic Cards.
+
 No part of this project may be incorporated into another product or service,
 whether commercial or non-commercial, without prior written permission from
 the copyright holder.

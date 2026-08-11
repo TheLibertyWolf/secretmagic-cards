@@ -145,6 +145,10 @@ function cards_migrate(PDO $pdo): void
         created_by INT UNSIGNED NULL,
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         archived_at DATETIME NULL,
+        source_title VARCHAR(160) NULL,
+        source_url VARCHAR(500) NULL,
+        source_author VARCHAR(160) NULL,
+        source_license VARCHAR(80) NULL,
         INDEX idx_cards_custom_styles_active (active),
         CONSTRAINT fk_cards_custom_style_admin FOREIGN KEY (created_by) REFERENCES cards_admins(id) ON DELETE SET NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
@@ -155,12 +159,33 @@ function cards_migrate(PDO $pdo): void
         suit VARCHAR(12) NOT NULL,
         rank_value VARCHAR(8) NOT NULL,
         image_filename VARCHAR(100) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+        image_width SMALLINT UNSIGNED NULL,
+        image_height SMALLINT UNSIGNED NULL,
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         UNIQUE KEY uq_cards_custom_card (style_id, suit, rank_value),
         INDEX idx_cards_custom_card_style (style_id),
         CONSTRAINT fk_cards_custom_card_style FOREIGN KEY (style_id) REFERENCES cards_custom_styles(id) ON DELETE RESTRICT
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    foreach ([
+        'source_title' => "VARCHAR(160) NULL AFTER archived_at",
+        'source_url' => "VARCHAR(500) NULL AFTER source_title",
+        'source_author' => "VARCHAR(160) NULL AFTER source_url",
+        'source_license' => "VARCHAR(80) NULL AFTER source_author",
+    ] as $column => $definition) {
+        if (!$pdo->query("SHOW COLUMNS FROM cards_custom_styles LIKE " . $pdo->quote($column))->fetch()) {
+            $pdo->exec("ALTER TABLE cards_custom_styles ADD COLUMN $column $definition");
+        }
+    }
+    foreach ([
+        'image_width' => "SMALLINT UNSIGNED NULL AFTER image_filename",
+        'image_height' => "SMALLINT UNSIGNED NULL AFTER image_width",
+    ] as $column => $definition) {
+        if (!$pdo->query("SHOW COLUMNS FROM cards_custom_cards LIKE " . $pdo->quote($column))->fetch()) {
+            $pdo->exec("ALTER TABLE cards_custom_cards ADD COLUMN $column $definition");
+        }
+    }
 
     $pdo->exec("CREATE TABLE IF NOT EXISTS cards_nfc_sdm_scans (
         id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

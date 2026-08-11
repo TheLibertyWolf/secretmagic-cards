@@ -145,7 +145,7 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
         <?php if ($active === 'nfc'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-modal.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-archive.css')) ?>"><?php endif; ?>
         <?php if ($active === 'links'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/links.css')) ?>"><?php endif; ?>
         <?php if ($active === 'account'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/account.css')) ?>"><?php endif; ?>
-        <?php if ($active === 'styles'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/styles.css')) ?>"><?php endif; ?>
+        <?php if ($active === 'styles'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/styles.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/styles-source.css')) ?>"><?php endif; ?>
     </head>
     <body class="dashboard" data-base-url="<?= cards_h(rtrim((string) cards_config()['app_url'], '/')) ?>">
         <header class="topbar">

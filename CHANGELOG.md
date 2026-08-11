@@ -10,6 +10,12 @@ Toutes les modifications notables de Secret Magic Cards sont documentées ici.
 - Ajout d’une modale responsive présentant le logiciel, sa version, sa licence, son auteur et le dépôt GitHub.
 - Ajout d’un versionnement des ressources admin pour éviter qu’un ancien script mis en cache bloque les nouvelles actions.
 
+### Styles personnalisés
+
+- Conservation du ratio propre à chaque image importée jusque dans le cadre public de la carte.
+- Ajout des dimensions d’image et des informations facultatives de source, d’auteur et de licence aux styles personnalisés.
+- Affichage de l’attribution d’une bibliothèque illustrée dans son panneau d’administration.
+
 ## [2.0.0] — 2026-08-11
 
 ### Styles personnalisés
