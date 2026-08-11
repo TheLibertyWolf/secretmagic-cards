@@ -1,0 +1,7 @@
+/app/install.lock
+/public/cards_loader.php
+/config.php
+*.log
+.DS_Store
+/.idea/
+/.vscode/

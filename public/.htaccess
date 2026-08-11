@@ -1,0 +1,18 @@
+# Secret Magic Cards — Apache 2.4+
+Options -Indexes
+ServerSignature Off
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^nfc/([a-f0-9]{24})/?$ index.php?sdm_profile=$1 [L,QSA,NC]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "no-referrer"
+</IfModule>
+
+<FilesMatch "^(?:\.user\.ini|php\.ini|readme\.txt|cards_loader\.php)$">
+  Require all denied
+</FilesMatch>
