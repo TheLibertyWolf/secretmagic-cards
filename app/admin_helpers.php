@@ -114,6 +114,11 @@ function cards_app_version(): string
     return '2.0.0';
 }
 
+function cards_admin_asset(string $path): string
+{
+    return $path . (str_contains($path, '?') ? '&' : '?') . 'v=' . rawurlencode(cards_app_version());
+}
+
 function cards_admin_page_start(string $title, string $active, array $admin): void
 {
     $csrf = cards_csrf_token();
@@ -134,13 +139,13 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="theme-color" content="#0b0e14">
         <title><?= cards_h($title) ?> — Secret Magic Cards</title>
-        <link rel="stylesheet" href="/admin/admin.css">
-        <link rel="stylesheet" href="/admin/admin-layout.css">
-        <link rel="stylesheet" href="/admin/about.css">
-        <?php if ($active === 'nfc'): ?><link rel="stylesheet" href="/admin/nfc.css"><link rel="stylesheet" href="/admin/nfc-modal.css"><link rel="stylesheet" href="/admin/nfc-archive.css"><?php endif; ?>
-        <?php if ($active === 'links'): ?><link rel="stylesheet" href="/admin/links.css"><?php endif; ?>
-        <?php if ($active === 'account'): ?><link rel="stylesheet" href="/admin/account.css"><?php endif; ?>
-        <?php if ($active === 'styles'): ?><link rel="stylesheet" href="/admin/styles.css"><?php endif; ?>
+        <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/admin.css')) ?>">
+        <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/admin-layout.css')) ?>">
+        <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/about.css')) ?>">
+        <?php if ($active === 'nfc'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-modal.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-archive.css')) ?>"><?php endif; ?>
+        <?php if ($active === 'links'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/links.css')) ?>"><?php endif; ?>
+        <?php if ($active === 'account'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/account.css')) ?>"><?php endif; ?>
+        <?php if ($active === 'styles'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/styles.css')) ?>"><?php endif; ?>
     </head>
     <body class="dashboard" data-base-url="<?= cards_h(rtrim((string) cards_config()['app_url'], '/')) ?>">
         <header class="topbar">
@@ -174,7 +179,7 @@ function cards_admin_page_end(array $scripts = []): void
     ?>
             </main>
         </div>
-        <?php foreach ($scripts as $script): ?><script src="<?= cards_h($script) ?>"></script><?php endforeach; ?>
+        <?php foreach ($scripts as $script): ?><script src="<?= cards_h(cards_admin_asset($script)) ?>"></script><?php endforeach; ?>
         <dialog class="about-dialog" id="about-dialog" aria-labelledby="about-title">
             <article>
                 <button type="button" class="about-close" data-close-about aria-label="Fermer la fenêtre À propos">×</button>
@@ -193,7 +198,7 @@ function cards_admin_page_end(array $scripts = []): void
                 <footer><span>© 2026 TheLibertyWolf · Licence propriétaire</span><button class="primary" type="button" data-close-about>Refermer</button></footer>
             </article>
         </dialog>
-        <script src="/admin/about.js"></script>
+        <script src="<?= cards_h(cards_admin_asset('/admin/about.js')) ?>"></script>
     </body>
     </html>
     <?php
