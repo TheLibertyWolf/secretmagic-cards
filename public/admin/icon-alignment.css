@@ -1,0 +1,93 @@
+/* Formes géométriques : évite les décalages optiques liés aux glyphes des polices. */
+.add-tag > span {
+    position: relative;
+    font-size: 0;
+}
+
+.add-tag > span::before,
+.add-tag > span::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 22px;
+    height: 3px;
+    border-radius: 99px;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+}
+
+.add-tag > span::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.dialog-close {
+    position: relative;
+}
+
+.dialog-close,
+.about-close,
+.link-delete-dialog form > span,
+.account-delete-dialog form > span {
+    font-size: 0;
+}
+
+.link-delete-dialog form > span,
+.account-delete-dialog form > span {
+    position: relative;
+}
+
+.dialog-close::before,
+.dialog-close::after,
+.about-close::before,
+.about-close::after,
+.link-delete-dialog form > span::before,
+.link-delete-dialog form > span::after,
+.account-delete-dialog form > span::before,
+.account-delete-dialog form > span::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 15px;
+    height: 2px;
+    border-radius: 99px;
+    background: currentColor;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.dialog-close::after,
+.about-close::after,
+.link-delete-dialog form > span::after,
+.account-delete-dialog form > span::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.danger-icon {
+    position: relative;
+    font-size: 0;
+}
+
+.danger-icon::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    width: 2px;
+    height: 21px;
+    border-radius: 99px;
+    background: currentColor;
+    transform: translateX(-50%);
+}
+
+.danger-icon::after {
+    content: "";
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
