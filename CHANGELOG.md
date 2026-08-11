@@ -15,6 +15,8 @@ Toutes les modifications notables de Secret Magic Cards sont documentées ici.
 - Conservation du ratio propre à chaque image importée jusque dans le cadre public de la carte.
 - Ajout des dimensions d’image et des informations facultatives de source, d’auteur et de licence aux styles personnalisés.
 - Affichage de l’attribution d’une bibliothèque illustrée dans son panneau d’administration.
+- Ajout d’une version de cache à chaque image personnalisée afin qu’un remplacement apparaisse immédiatement.
+- Correction des bibliothèques SVG importées : utilisation des cartes individuelles complètes plutôt que d’un découpage de planche susceptible de rogner les bordures.
 
 ## [2.0.0] — 2026-08-11
 

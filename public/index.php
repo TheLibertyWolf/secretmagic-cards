@@ -218,9 +218,10 @@ $rang = $valeurs[$valeurCle];
 $customCardId = null;
 $customStyleName = null;
 $customCardRatio = null;
+$customCardVersion = null;
 if (preg_match('/^custom_([1-9][0-9]*)$/', $style, $customStyleMatch)) {
     try {
-        $customQuery = cards_db()->prepare('SELECT c.id, c.image_filename, c.image_width, c.image_height, s.name FROM cards_custom_cards c JOIN cards_custom_styles s ON s.id = c.style_id WHERE c.style_id = ? AND c.suit = ? AND c.rank_value = ? LIMIT 1');
+        $customQuery = cards_db()->prepare('SELECT c.id, c.image_filename, c.image_width, c.image_height, c.updated_at, s.name FROM cards_custom_cards c JOIN cards_custom_styles s ON s.id = c.style_id WHERE c.style_id = ? AND c.suit = ? AND c.rank_value = ? LIMIT 1');
         $customQuery->execute([(int) $customStyleMatch[1], $enseigneCle, $valeurCle]);
         $customCard = $customQuery->fetch();
         if (!$customCard) {
@@ -228,6 +229,7 @@ if (preg_match('/^custom_([1-9][0-9]*)$/', $style, $customStyleMatch)) {
         }
         $customCardId = (int) $customCard['id'];
         $customStyleName = (string) $customCard['name'];
+        $customCardVersion = max(1, strtotime((string) $customCard['updated_at']));
         $imageWidth = (int) ($customCard['image_width'] ?? 0);
         $imageHeight = (int) ($customCard['image_height'] ?? 0);
         if ($imageWidth < 1 || $imageHeight < 1) {
@@ -512,7 +514,7 @@ $estNombre = ctype_digit($valeurCle);
             <div class="face back" aria-hidden="true"></div>
             <div class="face front">
                 <?php if ($customCardId): ?>
-                <img class="custom-card-image" src="/card-image.php?id=<?= $customCardId ?>" alt="<?= htmlspecialchars(ucfirst($nomCarte) . ' — ' . $customStyleName, ENT_QUOTES, 'UTF-8') ?>">
+                <img class="custom-card-image" src="/card-image.php?id=<?= $customCardId ?>&amp;v=<?= $customCardVersion ?>" alt="<?= htmlspecialchars(ucfirst($nomCarte) . ' — ' . $customStyleName, ENT_QUOTES, 'UTF-8') ?>">
                 <?php else: ?>
                 <div class="corner" aria-hidden="true"><span><?= $rang ?></span><span class="suit"><?= $enseigne['symbole'] ?></span></div>
                 <div class="corner bottom" aria-hidden="true"><span><?= $rang ?></span><span class="suit"><?= $enseigne['symbole'] ?></span></div>
