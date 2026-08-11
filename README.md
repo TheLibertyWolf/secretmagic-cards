@@ -39,6 +39,31 @@ Application web mobile permettant de révéler une carte parmi les 52 cartes ave
 
 La séparation protège la configuration SQL, les clés NFC et la logique serveur contre un téléchargement direct.
 
+## Graphe des dépendances
+
+```mermaid
+flowchart TD
+    Browser["Navigateur mobile"] --> Public["Interface publique"]
+    Browser --> Admin["Administration authentifiée"]
+    Browser --> Installer["Wizard d’installation"]
+    Public --> Bootstrap["Bootstrap et sécurité"]
+    Admin --> Helpers["Helpers administrateur"]
+    Helpers --> Bootstrap
+    Installer --> Config["Configuration privée"]
+    Installer --> Database[("MySQL / MariaDB")]
+    Bootstrap --> Config
+    Bootstrap --> Database
+    Public --> Renderer["Moteur de rendu des cartes"]
+    Public --> ShortLinks["Liens courts"]
+    Public --> SDM["Validation NTAG 424 SDM"]
+    ShortLinks --> Database
+    SDM --> Crypto["OpenSSL AES / CMAC"]
+    SDM --> Database
+    Admin --> QR["QRCode.js embarqué"]
+```
+
+Les seules dépendances d’exécution sont PHP, ses extensions natives déclarées dans `composer.json`, MySQL/MariaDB et la copie locale de QRCode.js. Aucun framework ni service JavaScript tiers n’est chargé par les visiteurs.
+
 ## Installation
 
 1. Copiez le contenu de `app/` dans un dossier privé, par exemple `/home/votre-compte/cards_app`.

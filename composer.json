@@ -1,0 +1,18 @@
+{
+  "name": "thelibertywolf/secretmagic-cards",
+  "description": "Mobile playing-card reveals, short links and NTAG 424 DNA SDM validation.",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.1",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-openssl": "*",
+    "ext-pdo": "*",
+    "ext-pdo_mysql": "*"
+  },
+  "config": {
+    "allow-plugins": {},
+    "sort-packages": true
+  }
+}
