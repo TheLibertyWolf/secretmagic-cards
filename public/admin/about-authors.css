@@ -1,0 +1,14 @@
+.author-card + .author-card {
+    margin-top: 10px;
+}
+
+.magician-card {
+    border-color: rgba(217, 183, 103, .34);
+    background: linear-gradient(135deg, rgba(217, 183, 103, .1), #0d1118 65%);
+}
+
+.magician-card .author-avatar {
+    border-color: rgba(217, 183, 103, .48);
+    color: #f0d58f;
+    background: rgba(217, 183, 103, .12);
+}

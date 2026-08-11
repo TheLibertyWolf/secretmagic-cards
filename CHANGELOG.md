@@ -10,6 +10,7 @@ Toutes les modifications notables de Secret Magic Cards sont documentées ici.
 - Ajout d’une modale responsive présentant le logiciel, sa version, sa licence, son auteur et le dépôt GitHub.
 - Ajout d’un versionnement des ressources admin pour éviter qu’un ancien script mis en cache bloque les nouvelles actions.
 - Ajout de la modification de la carte de destination d’une puce NFC sans changer son URL, sa clé maître ni son historique.
+- Ajout de David Saliba comme magicien et concepteur du tour dans « À propos », et remplacement de la signature technique par Arnaud Moine.
 
 ### Styles personnalisés
 

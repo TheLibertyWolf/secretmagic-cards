@@ -142,6 +142,7 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
         <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/admin.css')) ?>">
         <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/admin-layout.css')) ?>">
         <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/about.css')) ?>">
+        <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/about-authors.css')) ?>">
         <?php if ($active === 'nfc'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-modal.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-archive.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-edit.css')) ?>"><?php endif; ?>
         <?php if ($active === 'links'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/links.css')) ?>"><?php endif; ?>
         <?php if ($active === 'account'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/account.css')) ?>"><?php endif; ?>
@@ -190,12 +191,17 @@ function cards_admin_page_end(array $scripts = []): void
                 <p class="about-lead">Une expérience pensée pour les illusionnistes : révéler une carte avec élégance, préparer des liens éphémères et prolonger la magie grâce aux puces NFC sécurisées.</p>
                 <div class="about-capabilities"><span>52 cartes</span><span>Révélations privées</span><span>NTAG 424 DNA</span><span>Mobile first</span></div>
                 <blockquote>« La meilleure technologie est celle qui disparaît pour laisser toute la place à la magie. »</blockquote>
+                <section class="author-card magician-card" aria-label="Magicien et concepteur du tour">
+                    <div class="author-avatar" aria-hidden="true">DS</div>
+                    <div><small>Magicien · concepteur du tour</small><h3>David Saliba</h3><p>Imagineur en chef, maître des révélations et main magique derrière le miracle.</p></div>
+                    <a href="https://secretmagic.fr" target="_blank" rel="noopener noreferrer" aria-label="Découvrir le site Secret Magic de David Saliba">Secret Magic <span aria-hidden="true">↗</span></a>
+                </section>
                 <section class="author-card" aria-label="Auteur du logiciel">
-                    <div class="author-avatar" aria-hidden="true">TLW</div>
-                    <div><small>Créé et maintenu par</small><h3>TheLibertyWolf</h3><p>Conception, développement et expérience magique.</p></div>
+                    <div class="author-avatar" aria-hidden="true">AM</div>
+                    <div><small>Créé et maintenu par</small><h3>Arnaud Moine</h3><p>Conception, développement et expérience magique.</p></div>
                     <a href="https://github.com/TheLibertyWolf/secretmagic-cards" target="_blank" rel="noopener noreferrer" aria-label="Voir Secret Magic Cards sur GitHub">GitHub <span aria-hidden="true">↗</span></a>
                 </section>
-                <footer><span>© 2026 TheLibertyWolf · Licence propriétaire</span><button class="primary" type="button" data-close-about>Refermer</button></footer>
+                <footer><span>© 2026 Arnaud Moine · Licence propriétaire</span><button class="primary" type="button" data-close-about>Refermer</button></footer>
             </article>
         </dialog>
         <script src="<?= cards_h(cards_admin_asset('/admin/about.js')) ?>"></script>
