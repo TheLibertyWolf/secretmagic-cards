@@ -102,6 +102,18 @@ function cards_style_label(PDO $pdo, string $style): string
     return $style;
 }
 
+function cards_app_version(): string
+{
+    $versionFile = __DIR__ . '/VERSION';
+    if (is_file($versionFile) && is_readable($versionFile)) {
+        $version = trim((string) file_get_contents($versionFile));
+        if (preg_match('/^[0-9]+\.[0-9]+\.[0-9]+$/', $version)) {
+            return $version;
+        }
+    }
+    return '2.0.0';
+}
+
 function cards_admin_page_start(string $title, string $active, array $admin): void
 {
     $csrf = cards_csrf_token();
@@ -124,6 +136,7 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
         <title><?= cards_h($title) ?> — Secret Magic Cards</title>
         <link rel="stylesheet" href="/admin/admin.css">
         <link rel="stylesheet" href="/admin/admin-layout.css">
+        <link rel="stylesheet" href="/admin/about.css">
         <?php if ($active === 'nfc'): ?><link rel="stylesheet" href="/admin/nfc.css"><link rel="stylesheet" href="/admin/nfc-modal.css"><link rel="stylesheet" href="/admin/nfc-archive.css"><?php endif; ?>
         <?php if ($active === 'links'): ?><link rel="stylesheet" href="/admin/links.css"><?php endif; ?>
         <?php if ($active === 'account'): ?><link rel="stylesheet" href="/admin/account.css"><?php endif; ?>
@@ -132,10 +145,13 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
     <body class="dashboard" data-base-url="<?= cards_h(rtrim((string) cards_config()['app_url'], '/')) ?>">
         <header class="topbar">
             <a class="brand" href="/admin/"><span>♠</span> Secret Magic</a>
-            <form method="post" action="/admin/">
-                <input type="hidden" name="action" value="logout"><input type="hidden" name="csrf_token" value="<?= cards_h($csrf) ?>">
-                <button class="ghost small" type="submit">Déconnexion</button>
-            </form>
+            <div class="topbar-actions">
+                <button class="ghost small about-trigger" type="button" data-open-about><span aria-hidden="true">ⓘ</span> À propos</button>
+                <form method="post" action="/admin/">
+                    <input type="hidden" name="action" value="logout"><input type="hidden" name="csrf_token" value="<?= cards_h($csrf) ?>">
+                    <button class="ghost small" type="submit">Déconnexion</button>
+                </form>
+            </div>
         </header>
         <div class="admin-layout">
             <aside class="sidebar-nav" aria-label="Navigation administration">
@@ -159,6 +175,25 @@ function cards_admin_page_end(array $scripts = []): void
             </main>
         </div>
         <?php foreach ($scripts as $script): ?><script src="<?= cards_h($script) ?>"></script><?php endforeach; ?>
+        <dialog class="about-dialog" id="about-dialog" aria-labelledby="about-title">
+            <article>
+                <button type="button" class="about-close" data-close-about aria-label="Fermer la fenêtre À propos">×</button>
+                <div class="about-hero">
+                    <div class="about-mark" aria-hidden="true"><i></i><i></i><b>♠</b></div>
+                    <div><p class="eyebrow">À propos du logiciel</p><h2 id="about-title">Secret Magic Cards</h2><span class="about-version">Version <?= cards_h(cards_app_version()) ?></span></div>
+                </div>
+                <p class="about-lead">Une expérience pensée pour les illusionnistes : révéler une carte avec élégance, préparer des liens éphémères et prolonger la magie grâce aux puces NFC sécurisées.</p>
+                <div class="about-capabilities"><span>52 cartes</span><span>Révélations privées</span><span>NTAG 424 DNA</span><span>Mobile first</span></div>
+                <blockquote>« La meilleure technologie est celle qui disparaît pour laisser toute la place à la magie. »</blockquote>
+                <section class="author-card" aria-label="Auteur du logiciel">
+                    <div class="author-avatar" aria-hidden="true">TLW</div>
+                    <div><small>Créé et maintenu par</small><h3>TheLibertyWolf</h3><p>Conception, développement et expérience magique.</p></div>
+                    <a href="https://github.com/TheLibertyWolf/secretmagic-cards" target="_blank" rel="noopener noreferrer" aria-label="Voir Secret Magic Cards sur GitHub">GitHub <span aria-hidden="true">↗</span></a>
+                </section>
+                <footer><span>© 2026 TheLibertyWolf · Licence propriétaire</span><button class="primary" type="button" data-close-about>Refermer</button></footer>
+            </article>
+        </dialog>
+        <script src="/admin/about.js"></script>
     </body>
     </html>
     <?php

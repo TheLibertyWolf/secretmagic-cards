@@ -16,6 +16,7 @@ Application web mobile permettant de révéler une carte parmi les 52 cartes ave
 - URL SDM signée différente à chaque scan physique et protection anti-rejeu par compteur.
 - Création de styles personnalisés et import manuel, carte par carte, des visuels disponibles.
 - Comptes `admin` et `utilisateur`, sessions sécurisées et limitation des tentatives de connexion.
+- Fenêtre « À propos » responsive avec version, informations d’auteur, licence et accès au dépôt GitHub.
 - Assistant d’installation en quatre étapes.
 
 ![Générateur de cartes](docs/screenshots/generator.png)

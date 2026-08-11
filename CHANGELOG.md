@@ -4,6 +4,11 @@ Toutes les modifications notables de Secret Magic Cards sont documentées ici.
 
 ## [Non publié]
 
+### Administration
+
+- Ajout d’un bouton « À propos » avant la déconnexion sur toutes les pages administratives.
+- Ajout d’une modale responsive présentant le logiciel, sa version, sa licence, son auteur et le dépôt GitHub.
+
 ## [2.0.0] — 2026-08-11
 
 ### Styles personnalisés
