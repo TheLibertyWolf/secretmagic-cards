@@ -9,6 +9,5 @@
         dialog.querySelector('[data-close-about]')?.focus();
     }));
     dialog.querySelectorAll('[data-close-about]').forEach(button => button.addEventListener('click', () => dialog.close()));
-    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
     dialog.addEventListener('close', () => opener?.focus());
 })();

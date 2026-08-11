@@ -1,0 +1,53 @@
+dialog[open] {
+    animation: admin-modal-in .18s ease-out both;
+}
+
+dialog[open]::backdrop {
+    animation: admin-backdrop-in .18s ease-out both;
+}
+
+dialog.modal-static-feedback {
+    animation: admin-modal-static .2s ease-out;
+}
+
+@keyframes admin-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(-18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes admin-backdrop-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes admin-modal-static {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.018); }
+}
+
+@media (max-width: 560px) {
+    @keyframes admin-modal-in {
+        from {
+            opacity: 0;
+            transform: translateY(28px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    dialog[open],
+    dialog[open]::backdrop,
+    dialog.modal-static-feedback {
+        animation: none;
+    }
+}

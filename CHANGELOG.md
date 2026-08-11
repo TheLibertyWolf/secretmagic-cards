@@ -13,6 +13,7 @@ Toutes les modifications notables de Secret Magic Cards sont documentées ici.
 - Ajout de David Saliba comme magicien et concepteur du tour dans « À propos », et remplacement de la signature technique par Arnaud Moine.
 - Centrage géométrique des icônes circulaires de l’administration, indépendamment des métriques de police.
 - Correction de la priorité des styles afin de masquer complètement les anciens glyphes sous les icônes géométriques.
+- Passage des modales en arrière-plan statique : un clic extérieur ne les ferme plus et déclenche une animation de retour visuel inspirée de Bootstrap.
 
 ### Styles personnalisés
 

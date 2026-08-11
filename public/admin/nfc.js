@@ -64,7 +64,6 @@
     backButton?.addEventListener('click', () => showCreateStep(1));
 
     wizard?.querySelectorAll('[data-close-dialog]').forEach(button => button.addEventListener('click', () => wizard.close()));
-    wizard?.addEventListener('click', event => { if (event.target === wizard) wizard.close(); });
     if (wizard?.dataset.autoOpen === 'program') {
         showProgram(null);
         const clean = new URL(window.location.href);
@@ -124,7 +123,6 @@
     editStyle?.addEventListener('change', () => filterCardOptions(editSuit, editRank, editStyle));
     editSuit?.addEventListener('change', () => filterCardOptions(editSuit, editRank, editStyle));
     editDialog?.querySelectorAll('[data-close-edit]').forEach(button => button.addEventListener('click', () => editDialog.close()));
-    editDialog?.addEventListener('click', event => { if (event.target === editDialog) editDialog.close(); });
 
     document.querySelectorAll('.archive-profile').forEach(button => {
         button.addEventListener('click', () => {
@@ -134,7 +132,6 @@
         });
     });
     archiveDialog?.querySelector('[data-close-archive]')?.addEventListener('click', () => archiveDialog.close());
-    archiveDialog?.addEventListener('click', event => { if (event.target === archiveDialog) archiveDialog.close(); });
 
     const nfcSuit = document.getElementById('nfc-suit');
     const nfcRank = document.getElementById('nfc-rank');

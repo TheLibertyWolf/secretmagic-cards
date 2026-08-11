@@ -148,6 +148,7 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
         <?php if ($active === 'account'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/account.css')) ?>"><?php endif; ?>
         <?php if ($active === 'styles'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/styles.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/styles-source.css')) ?>"><?php endif; ?>
         <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/icon-alignment.css')) ?>">
+        <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/modal-behavior.css')) ?>">
     </head>
     <body class="dashboard" data-base-url="<?= cards_h(rtrim((string) cards_config()['app_url'], '/')) ?>">
         <header class="topbar">
@@ -205,6 +206,7 @@ function cards_admin_page_end(array $scripts = []): void
                 <footer><span>© 2026 Arnaud Moine · Licence propriétaire</span><button class="primary" type="button" data-close-about>Refermer</button></footer>
             </article>
         </dialog>
+        <script src="<?= cards_h(cards_admin_asset('/admin/modal-behavior.js')) ?>"></script>
         <script src="<?= cards_h(cards_admin_asset('/admin/about.js')) ?>"></script>
     </body>
     </html>

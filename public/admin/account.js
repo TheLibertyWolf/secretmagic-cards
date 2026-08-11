@@ -8,5 +8,4 @@
         dialog.showModal();
     }));
     dialog.querySelector('[data-cancel-account-delete]').addEventListener('click', () => dialog.close());
-    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
 })();
