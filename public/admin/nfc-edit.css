@@ -1,0 +1,56 @@
+.tag-action-menu .edit-profile-card {
+    color: #9aebbf;
+}
+
+.edit-card-dialog {
+    width: min(calc(100% - 24px), 620px);
+}
+
+.edit-card-form {
+    display: grid;
+    gap: 22px;
+    padding: 22px;
+}
+
+.destination-lock {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px;
+    border: 1px solid rgba(88, 214, 154, .28);
+    border-radius: 14px;
+    color: #9aebbf;
+    background: rgba(88, 214, 154, .07);
+}
+
+.destination-lock > span {
+    display: grid;
+    place-items: center;
+    flex: 0 0 38px;
+    height: 38px;
+    border-radius: 12px;
+    color: #11151d;
+    background: #68dba2;
+    font-size: 21px;
+}
+
+.destination-lock p {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+}
+
+.destination-lock small {
+    color: #a8b7b2;
+    line-height: 1.4;
+}
+
+@media (max-width: 560px) {
+    .edit-card-form {
+        padding: 18px 16px;
+    }
+
+    .edit-card-dialog .dialog-footer .primary {
+        min-width: 165px;
+    }
+}

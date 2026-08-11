@@ -46,6 +46,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($id && $action === 'toggle_sdm') {
         $pdo->prepare('UPDATE cards_nfc_sdm_profiles SET active = IF(active=1,0,1) WHERE id = ? AND archived_at IS NULL')->execute([$id]);
         cards_admin_flash('success', 'État de la puce mis à jour.');
+    } elseif ($id && $action === 'update_sdm_card') {
+        $suit = isset($_POST['suit']) && is_string($_POST['suit']) ? $_POST['suit'] : '';
+        $rank = isset($_POST['rank']) && is_string($_POST['rank']) ? $_POST['rank'] : '';
+        $style = isset($_POST['visual_style']) && is_string($_POST['visual_style']) ? $_POST['visual_style'] : '';
+        if (!cards_card_choice_exists($pdo, $suit, $rank, $style)) {
+            cards_admin_flash('error', 'La nouvelle carte de destination est invalide ou indisponible.');
+        } else {
+            $profileLookup = $pdo->prepare('SELECT 1 FROM cards_nfc_sdm_profiles WHERE id = ? AND archived_at IS NULL LIMIT 1');
+            $profileLookup->execute([$id]);
+            if ($profileLookup->fetchColumn()) {
+                $update = $pdo->prepare('UPDATE cards_nfc_sdm_profiles SET suit = ?, rank_value = ?, visual_style = ? WHERE id = ? AND archived_at IS NULL');
+                $update->execute([$suit, $rank, $style, $id]);
+                cards_admin_flash('success', 'Carte de destination modifiée. Le lien et la clé NFC restent inchangés.');
+            } else {
+                cards_admin_flash('error', 'Cette puce est introuvable ou archivée.');
+            }
+        }
     } elseif ($id && $action === 'archive_sdm') {
         $lookup = $pdo->prepare('SELECT nickname FROM cards_nfc_sdm_profiles WHERE id = ? LIMIT 1');
         $lookup->execute([$id]);
@@ -99,6 +116,7 @@ cards_admin_page_start('Mes puces NFC 424', 'nfc', $admin);
             <button type="button" class="primary program-profile" data-id="<?= (int) $profile['id'] ?>" data-nickname="<?= cards_h($profile['nickname']) ?>" data-url="<?= cards_h($profile['program_url']) ?>" data-key="<?= cards_h($profile['master_key']) ?>">Programmer</button>
             <button type="button" class="ghost tag-more" aria-expanded="false" aria-controls="actions-<?= (int) $profile['id'] ?>">•••</button>
             <div class="tag-action-menu" id="actions-<?= (int) $profile['id'] ?>" hidden>
+                <button type="button" class="edit-profile-card" data-id="<?= (int) $profile['id'] ?>" data-nickname="<?= cards_h($profile['nickname']) ?>" data-suit="<?= cards_h($profile['suit']) ?>" data-rank="<?= cards_h($profile['rank_value']) ?>" data-style="<?= cards_h($profile['visual_style']) ?>">Modifier la carte…</button>
                 <form method="post"><input type="hidden" name="action" value="toggle_sdm"><input type="hidden" name="profile_id" value="<?= (int) $profile['id'] ?>"><input type="hidden" name="csrf_token" value="<?= cards_h(cards_csrf_token()) ?>"><button type="submit"><?= (int) $profile['active'] === 1 ? 'Désactiver' : 'Réactiver' ?></button></form>
                 <button type="button" class="archive-profile" data-id="<?= (int) $profile['id'] ?>" data-nickname="<?= cards_h($profile['nickname']) ?>">Archiver…</button>
             </div>
@@ -164,6 +182,23 @@ cards_admin_page_start('Mes puces NFC 424', 'nfc', $admin);
         <button type="submit" class="primary" id="wizard-submit" form="create-tag-form" hidden>Créer et continuer</button>
         <button type="button" class="primary" id="wizard-done" data-close-dialog hidden>Terminé</button>
     </footer>
+</dialog>
+
+<dialog class="nfc-dialog edit-card-dialog" id="edit-card-dialog" aria-labelledby="edit-card-title">
+    <div class="dialog-bar"><div><p class="eyebrow">Destination de la puce</p><h2 id="edit-card-title">Modifier la carte</h2></div><button type="button" class="dialog-close" data-close-edit aria-label="Fermer">×</button></div>
+    <div class="dialog-body">
+        <form method="post" id="edit-card-form" class="edit-card-form">
+            <input type="hidden" name="action" value="update_sdm_card"><input type="hidden" name="profile_id" id="edit-profile-id"><input type="hidden" name="csrf_token" value="<?= cards_h(cards_csrf_token()) ?>">
+            <div class="wizard-copy"><p class="eyebrow">Puce sélectionnée</p><h3 id="edit-profile-name"></h3><p>Choisissez la carte révélée lors des prochains scans valides.</p></div>
+            <div class="wizard-fields">
+                <label>Enseigne<select name="suit" id="edit-suit"><?php foreach ($options['suits'] as $value => $label): ?><option value="<?= cards_h($value) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>
+                <label>Valeur<select name="rank" id="edit-rank"><?php foreach ($options['ranks'] as $value => $label): ?><option value="<?= cards_h($value) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>
+                <label>Style<select name="visual_style" id="edit-style"><?php foreach ($options['styles'] as $value => $label): $available = $options['availability'][$value] ?? []; ?><option value="<?= cards_h($value) ?>" data-cards="<?= cards_h($available === '*' ? '*' : implode(',', $available)) ?>"><?= cards_h($label) ?></option><?php endforeach; ?></select></label>
+            </div>
+            <div class="destination-lock"><span aria-hidden="true">⌁</span><p><strong>La liaison NFC reste intacte.</strong><small>L’URL programmée, la clé maître, les scans et l’historique ne seront pas modifiés.</small></p></div>
+        </form>
+    </div>
+    <footer class="dialog-footer"><button type="button" class="ghost" data-close-edit>Annuler</button><span class="dialog-footer-spacer"></span><button type="submit" class="primary" form="edit-card-form">Enregistrer la carte</button></footer>
 </dialog>
 
 <dialog class="confirm-dialog" id="archive-dialog">

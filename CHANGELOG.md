@@ -9,6 +9,7 @@ Toutes les modifications notables de Secret Magic Cards sont documentées ici.
 - Ajout d’un bouton « À propos » avant la déconnexion sur toutes les pages administratives.
 - Ajout d’une modale responsive présentant le logiciel, sa version, sa licence, son auteur et le dépôt GitHub.
 - Ajout d’un versionnement des ressources admin pour éviter qu’un ancien script mis en cache bloque les nouvelles actions.
+- Ajout de la modification de la carte de destination d’une puce NFC sans changer son URL, sa clé maître ni son historique.
 
 ### Styles personnalisés
 
