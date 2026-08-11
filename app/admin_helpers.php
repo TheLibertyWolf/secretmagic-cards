@@ -143,11 +143,11 @@ function cards_admin_page_start(string $title, string $active, array $admin): vo
         <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/admin-layout.css')) ?>">
         <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/about.css')) ?>">
         <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/about-authors.css')) ?>">
-        <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/icon-alignment.css')) ?>">
         <?php if ($active === 'nfc'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-modal.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-archive.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/nfc-edit.css')) ?>"><?php endif; ?>
         <?php if ($active === 'links'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/links.css')) ?>"><?php endif; ?>
         <?php if ($active === 'account'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/account.css')) ?>"><?php endif; ?>
         <?php if ($active === 'styles'): ?><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/styles.css')) ?>"><link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/styles-source.css')) ?>"><?php endif; ?>
+        <link rel="stylesheet" href="<?= cards_h(cards_admin_asset('/admin/icon-alignment.css')) ?>">
     </head>
     <body class="dashboard" data-base-url="<?= cards_h(rtrim((string) cards_config()['app_url'], '/')) ?>">
         <header class="topbar">
